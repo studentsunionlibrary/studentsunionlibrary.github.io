@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notices | Student's Union Library</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top"><div class="wrap nav">
+<a class="identity" href="index.html"><img src="library-logo.png" alt="Library logo"><div><b>Student's Union Library</b><small>& Recreation Centre · Poonthura</small></div></a>
+<button class="menu" aria-label="Menu">☰</button>
+<nav><a href="index.html">Home</a><a href="catalogue.html">Catalogue</a><a href="member-login.html">Member Login</a><a href="events.html">Events</a><a href="notices.html">Notices</a><a href="gallery.html">Gallery</a><a href="index.html#contact">Contact</a></nav>
+</div></header>
+
+<section class="page-hero"><div class="wrap">
+<span class="eyebrow">Notice Board</span>
+<h1>Library notices</h1>
+<p>Important announcements and updates from the library.</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+<div id="noticeList" class="grid-2"></div>
+</div></section>
+
+<footer><div class="wrap foot"><img src="library-logo.png" alt=""><div><b>Student's Union Library & Recreation Centre</b><br><small>Poonthura · Reg. No. 01/TVM/3952</small></div><small>© <span data-year></span></small></div></footer>
+<script src="site.js"></script>
+<script>
+const box = document.getElementById('noticeList');
+
+box.textContent = 'Loading notices...';
+
+fetch('https://sularc1985.pythonanywhere.com/api/public/notices')
+  .then(response => {
+    if (!response.ok) throw new Error('Unable to load notices');
+    return response.json();
+  })
+  .then(data => {
+    box.replaceChildren();
+
+    const notices = data.notices || [];
+
+    if (!notices.length) {
+      const message = document.createElement('p');
+      message.textContent = 'No published notices at present.';
+      box.appendChild(message);
+      return;
+    }
+
+    notices.forEach(n => {
+      const article = document.createElement('article');
+      article.className = 'notice';
+
+      const category = document.createElement('span');
+      category.className = 'badge';
+      category.textContent = n.category || 'Notice';
+
+      const title = document.createElement('h3');
+      title.textContent = n.title || n.title_ml || '';
+
+      const date = document.createElement('small');
+      date.textContent = n.notice_date || '';
+
+      const body = document.createElement('p');
+      body.textContent = n.body || '';
+
+      article.append(category, title);
+
+      if (n.title_ml && n.title_ml !== n.title) {
+        const malayalamTitle = document.createElement('h4');
+        malayalamTitle.textContent = n.title_ml;
+        article.appendChild(malayalamTitle);
+      }
+
+      article.appendChild(date);
+
+      if (n.body) article.appendChild(body);
+
+      if (n.body_ml) {
+        const malayalamBody = document.createElement('p');
+        malayalamBody.textContent = n.body_ml;
+        article.appendChild(malayalamBody);
+      }
+
+      box.appendChild(article);
+    });
+  })
+  .catch(() => {
+    box.textContent = 'Notices could not be loaded. Please try again later.';
+  });
+</script>

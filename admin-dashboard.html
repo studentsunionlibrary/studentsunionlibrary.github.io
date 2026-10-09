@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard | SULARC</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.admin-card{background:#fff;border:1px solid #e5dcc8;border-top:4px solid #b58a27;border-radius:10px;padding:22px}
+.admin-card h3{margin:0 0 6px;color:#092b58}
+.locked{opacity:.7}
+@media(max-width:800px){.admin-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav">
+<a class="identity" href="index.html"><img src="library-logo.png" alt="Library logo"><div><b>Student's Union Library</b><small>& Recreation Centre · Poonthura</small></div></a>
+<nav><a href="index.html">Home</a><a href="admin-login.html">Admin Login</a></nav>
+</div></header>
+
+<section class="page-hero"><div class="wrap">
+<span class="eyebrow">Future admin portal</span>
+<h1>Admin Dashboard</h1>
+<p>This dashboard is a design preview only. Secure access will be enabled after backend integration.</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+<div class="admin-grid">
+  <div class="admin-card"><h3>Notices</h3><p>Create, edit and remove website notices.</p><a class="primary" href="mobile-content-manager.html">Open Content Manager</a></div>
+  <div class="admin-card"><h3>Events</h3><p>Manage programme dates and details.</p><a class="primary" href="mobile-content-manager.html">Manage Events</a></div>
+  <div class="admin-card"><h3>Gallery</h3><p>Manage approved public gallery albums.</p><a class="primary" href="mobile-content-manager.html">Manage Gallery</a></div>
+  <div class="admin-card locked"><h3>Pending Membership Applications</h3><p>Will show online applications after secure server connection.</p></div>
+  <div class="admin-card locked"><h3>Catalogue</h3><p>Will connect to the real library database after the main software is completed.</p></div>
+  <div class="admin-card locked"><h3>Members & Reports</h3><p>Will be available only through secure role-based access.</p></div>
+</div>
+</div></section>
+
+<footer><div class="wrap foot"><img src="library-logo.png" alt=""><div><b>Student's Union Library & Recreation Centre</b><br><small>Poonthura · Reg. No. 01/TVM/3952</small></div><small>© <span data-year></span></small></div></footer>
+<script src="site.js"></script>
+</body>
+</html>

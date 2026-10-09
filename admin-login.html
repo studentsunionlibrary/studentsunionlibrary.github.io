@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Login | SULARC</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.login-shell{min-height:70vh;display:grid;place-items:center;padding:40px 0}
+.login-card{width:min(460px,92%);background:#fff;border:1px solid #e5dcc8;border-top:4px solid #b58a27;border-radius:12px;padding:26px;box-shadow:0 12px 36px rgba(9,43,88,.08)}
+.secure-note{background:#fff8df;border:1px solid #e6d28d;padding:12px;border-radius:8px;font-size:.9rem;color:#5b4b20}
+.status{margin-top:12px;font-weight:700;color:#7a4f00}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav">
+<a class="identity" href="index.html"><img src="library-logo.png" alt="Library logo"><div><b>Student's Union Library</b><small>& Recreation Centre · Poonthura</small></div></a>
+<nav><a href="index.html">Home</a><a href="admin-login.html">Admin Login</a></nav>
+</div></header>
+
+<div class="login-shell">
+  <div class="login-card">
+    <span class="eyebrow">Admin area</span>
+    <h2>Admin Login</h2>
+    <div class="secure-note">
+      Real admin authentication is not enabled yet. Do not enter or store your real admin password in GitHub Pages.
+    </div>
+    <form id="adminLoginForm" style="margin-top:18px">
+      <label>Admin ID</label>
+      <input id="adminId" autocomplete="username" placeholder="Enter admin ID">
+      <label>Password</label>
+      <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+      <button class="primary" type="submit">Login</button>
+    </form>
+    <div id="loginStatus" class="status"></div>
+  </div>
+</div>
+
+<footer><div class="wrap foot"><img src="library-logo.png" alt=""><div><b>Student's Union Library & Recreation Centre</b><br><small>Poonthura · Reg. No. 01/TVM/3952</small></div><small>© <span data-year></span></small></div></footer>
+<script src="site.js"></script>
+<script>
+document.getElementById("adminLoginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  document.getElementById("loginStatus").textContent =
+    "Secure admin login will be activated after the website is connected to a private backend.";
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gallery | Student's Union Library</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header class="top">
+  <div class="wrap nav">
+
+    <a class="identity" href="index.html">
+      <img src="library-logo.png" alt="Library logo">
+      <div>
+        <b>Student's Union Library</b>
+        <small>& Recreation Centre · Poonthura</small>
+      </div>
+    </a>
+
+    <button class="menu" aria-label="Menu">☰</button>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="member-login.html">Member Login</a>
+      <a href="events.html">Events</a>
+      <a href="notices.html">Notices</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Gallery</span>
+    <h1>Library gallery</h1>
+    <p>Programme and community activity photographs.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+
+    <div class="photo-safety">
+      Only publish photographs the library has permission to share publicly.
+      Be especially careful with photographs of children.
+    </div>
+
+    <div id="galleryAlbums" class="grid-3" style="margin-top:20px">
+      <p>Loading gallery...</p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+
+    <img src="library-logo.png" alt="">
+
+    <div>
+      <b>Student's Union Library & Recreation Centre</b><br>
+      <small>Poonthura · Reg. No. 01/TVM/3952</small>
+    </div>
+
+    <small>© <span data-year></span></small>
+
+  </div>
+</footer>
+
+<script src="site.js"></script>
+
+<script>
+(function () {
+  "use strict";
+
+  const API_URL =
+    "https://sularc1985.pythonanywhere.com/api/public/gallery";
+
+  const container = document.getElementById("galleryAlbums");
+
+  function addText(parent, tag, value) {
+    if (value === null || value === undefined || value === "") {
+      return null;
+    }
+
+    const element = document.createElement(tag);
+    element.textContent = String(value);
+    parent.appendChild(element);
+
+    return element;
+  }
+
+  function showMessage(message) {
+    container.replaceChildren();
+    addText(container, "p", message);
+  }
+
+  function renderGallery(data) {
+    container.replaceChildren();
+
+    const albums = Array.isArray(data.albums)
+      ? data.albums
+      : [];
+
+    if (albums.length === 0) {
+      showMessage("No gallery albums published yet.");
+      return;
+    }
+
+    for (const album of albums) {
+
+      const card = document.createElement("article");
+      card.className = "card";
+      card.style.padding = "18px";
+
+      addText(card, "h3", album.title);
+      addText(card, "p", album.title_ml);
+
+      addText(card, "p", album.description);
+      addText(card, "p", album.description_ml);
+
+      if (album.album_date) {
+        addText(card, "small", album.album_date);
+      }
+
+      const photos = Array.isArray(album.photos)
+        ? album.photos
+        : [];
+
+      const count = document.createElement("p");
+      count.textContent =
+        photos.length + (photos.length === 1 ? " photo" : " photos");
+
+      card.appendChild(count);
+
+      const grid = document.createElement("div");
+      grid.style.display = "grid";
+      grid.style.gridTemplateColumns =
+        "repeat(auto-fit, minmax(180px, 1fr))";
+      grid.style.gap = "14px";
+      grid.style.marginTop = "14px";
+
+      for (const photo of photos) {
+
+        if (!photo.url) {
+          continue;
+        }
+
+        const img = document.createElement("img");
+        img.src = photo.url;
+        img.alt =
+          photo.caption ||
+          photo.caption_ml ||
+          album.title ||
+          "Library gallery photo";
+
+        img.loading = "lazy";
+        img.style.width = "100%";
+        img.style.height = "auto";
+        img.style.borderRadius = "8px";
+
+        const photoBox = document.createElement("figure");
+        photoBox.style.margin = "0";
+
+        photoBox.appendChild(img);
+
+        if (photo.caption || photo.caption_ml) {
+
+          const figcaption =
+            document.createElement("figcaption");
+
+          figcaption.style.padding = "8px 4px";
+          figcaption.style.fontSize = "14px";
+
+          if (photo.caption) {
+            addText(figcaption, "div", photo.caption);
+          }
+
+          if (photo.caption_ml) {
+            addText(figcaption, "div", photo.caption_ml);
+          }
+
+          photoBox.appendChild(figcaption);
+        }
+
+        grid.appendChild(photoBox);
+      }
+
+      card.appendChild(grid);
+      container.appendChild(card);
+    }
+  }
+
+  fetch(API_URL)
+    .then(function (response) {
+
+      if (!response.ok) {
+        throw new Error("Gallery API unavailable");
+      }
+
+      return response.json();
+    })
+    .then(renderGallery)
+    .catch(function () {
+      showMessage(
+        "Gallery could not be loaded. Please try again later."
+      );
+    });
+
+})();
+</script>
+
+</body>
+</html>

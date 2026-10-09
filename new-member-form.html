@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Membership Application | Student's Union Library</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top"><div class="wrap nav">
+<a class="identity" href="index.html"><img src="library-logo.png" alt="Library logo"><div><b>Student's Union Library</b><small>&amp; Recreation Centre · Poonthura</small></div></a>
+<button class="menu" aria-label="Menu">☰</button>
+<nav><a href="index.html">Home</a><a href="catalogue.html">Catalogue</a><a href="member-login.html">Member Login</a><a href="events.html">Events</a><a href="gallery.html">Gallery</a><a href="index.html#contact">Contact</a></nav>
+</div></header>
+
+<section class="page-hero"><div class="wrap">
+<span class="eyebrow">Membership</span>
+<h1>Apply for Library Membership</h1>
+<p>The online membership application is ready in the library software for all membership categories. Applications are reviewed by the librarian before activation.</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+<div class="portal-connect-card">
+  <div class="portal-status-icon">🔒</div>
+  <div>
+    <h2 id="portalTitle">Secure online service</h2>
+    <p id="portalMessage">This service is ready in the library software but is not yet connected to a permanent public HTTPS address.</p>
+    <a id="portalButton" class="primary portal-disabled" href="#" aria-disabled="true">Open Membership Application</a>
+    <p class="portal-note">The public website will activate this button after the library portal receives a stable HTTPS address.</p>
+  </div>
+</div>
+</div></section>
+
+<footer><div class="wrap foot"><img src="library-logo.png" alt=""><div><b>Student's Union Library &amp; Recreation Centre</b><br><small>Poonthura · Reg. No. 01/TVM/3952</small></div><small>© <span data-year></span></small></div></footer>
+<script src="site.js"></script>
+<script src="portal-config.js"></script>
+<script>
+(function(){
+  const url = window.SULARC_PORTAL_URL && window.SULARC_PORTAL_URL("membership");
+  const btn = document.getElementById("portalButton");
+  const msg = document.getElementById("portalMessage");
+  const title = document.getElementById("portalTitle");
+  if(url){
+    btn.href = url;
+    btn.classList.remove("portal-disabled");
+    btn.removeAttribute("aria-disabled");
+    btn.target = "_blank";
+    title.textContent = "Service available";
+    msg.textContent = "The secure library portal is connected. Use the button below to continue.";
+  } else {
+    btn.addEventListener("click", function(e){ e.preventDefault(); });
+  }
+})();
+</script>
+</body>
+</html>

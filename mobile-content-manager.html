@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mobile Content Manager | SULARC</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.manager-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.manager-tabs button{padding:10px 14px;border:1px solid #d8ccb0;background:#fff;border-radius:8px;font-weight:800;color:#092b58}
+.manager-tabs button.active{background:#092b58;color:#fff}
+.panel{display:none}.panel.active{display:block}
+.preview-list{display:grid;gap:12px;margin-top:18px}
+.preview-item{border:1px solid #e5dcc8;border-radius:8px;padding:14px;background:#fff}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.row-actions button{border:0;padding:7px 10px;border-radius:6px;font-weight:700}
+.delete{background:#f6dddd;color:#7f1d1d}
+.small-btn{background:#f3efe1;color:#092b58}
+.codebox{min-height:260px;font-family:monospace;font-size:.85rem}
+.noticebox{background:#fff8df;border:1px solid #e6d28d;border-left:4px solid #b58a27;padding:14px;border-radius:8px}
+</style>
+</head>
+<body>
+<section class="page-hero"><div class="wrap">
+<span class="eyebrow">Mobile content manager</span>
+<h1>Update notices, events & gallery</h1>
+<p>This page works entirely in your browser. It does not upload or save anything automatically.</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+<div class="noticebox">
+<strong>How this works:</strong> Add or edit content here, then tap <b>Download content-data.js</b>. Upload that downloaded file to GitHub and replace the old <code>content-data.js</code>. For gallery photos, upload the image file to GitHub too.
+</div>
+
+<div class="manager-tabs">
+<button class="active" data-panel="notices">Notices</button>
+<button data-panel="events">Events</button>
+<button data-panel="gallery">Gallery</button>
+<button data-panel="export">Export</button>
+</div>
+
+<div id="notices" class="panel active">
+  <div class="card">
+    <h3>Add Notice</h3>
+    <div class="form-grid">
+      <div><label>Date</label><input id="nDate" type="date"></div>
+      <div><label>Category</label><input id="nCategory" placeholder="Notice / Holiday / Programme"></div>
+      <div><label>Title</label><input id="nTitle"></div>
+      <div><label>Malayalam title</label><input id="nTitleMl"></div>
+    </div>
+    <label>Details</label><textarea id="nBody"></textarea>
+    <label>Malayalam details</label><textarea id="nBodyMl"></textarea>
+    <button class="primary" id="addNotice">Add Notice</button>
+  </div>
+  <div id="noticePreview" class="preview-list"></div>
+</div>
+
+<div id="events" class="panel">
+  <div class="card">
+    <h3>Add Event</h3>
+    <div class="form-grid">
+      <div><label>Date</label><input id="eDate" type="date"></div>
+      <div><label>Wing</label><select id="eWing"><option>Library</option><option>Balavedi</option><option>Vanitha Vedi</option><option>Senior Citizens' Wing</option></select></div>
+      <div><label>Title</label><input id="eTitle"></div>
+      <div><label>Malayalam title</label><input id="eTitleMl"></div>
+    </div>
+    <label>Details</label><textarea id="eDetails"></textarea>
+    <label>Malayalam details</label><textarea id="eDetailsMl"></textarea>
+    <button class="primary" id="addEvent">Add Event</button>
+  </div>
+  <div id="eventPreview" class="preview-list"></div>
+</div>
+
+<div id="gallery" class="panel">
+  <div class="card">
+    <h3>Add Gallery Album</h3>
+    <div class="form-grid">
+      <div><label>Album name</label><input id="gAlbum"></div>
+      <div><label>Malayalam album name</label><input id="gAlbumMl"></div>
+    </div>
+    <label>Description</label><textarea id="gDesc"></textarea>
+    <label>Malayalam description</label><textarea id="gDescMl"></textarea>
+    <label>Photo filenames (comma separated)</label><input id="gImages" placeholder="reading-day.jpg, balavedi-01.jpg">
+    <p class="small">Upload the photo files to GitHub separately using the exact same filenames.</p>
+    <button class="primary" id="addAlbum">Add Album</button>
+  </div>
+  <div id="galleryPreview" class="preview-list"></div>
+</div>
+
+<div id="export" class="panel">
+  <div class="card">
+    <h3>Export Website Content</h3>
+    <p>Download the generated file and replace <code>content-data.js</code> in your GitHub repository.</p>
+    <button class="primary" id="downloadFile">Download content-data.js</button>
+    <button class="outline" id="copyCode">Copy code</button>
+    <textarea id="codeOutput" class="codebox" readonly></textarea>
+  </div>
+</div>
+</div></section>
+
+<script src="content-data.js"></script>
+<script>
+const state = JSON.parse(JSON.stringify(window.SULARC_CONTENT || {notices:[],events:[],gallery:[]}));
+
+const $=id=>document.getElementById(id);
+document.querySelectorAll(".manager-tabs button").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".manager-tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active"); $(btn.dataset.panel).classList.add("active");
+    if(btn.dataset.panel==="export") refreshCode();
+  };
+});
+
+function esc(s){return (s||"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m]));}
+function render(){
+  $("noticePreview").innerHTML=state.notices.map((n,i)=>`
+    <div class="preview-item"><b>${esc(n.title)}</b><br><small>${esc(n.date||"")} · ${esc(n.category||"")}</small><p>${esc(n.body||"")}</p>
+    <div class="row-actions"><button class="delete" onclick="delItem('notices',${i})">Delete</button></div></div>`).join("");
+  $("eventPreview").innerHTML=state.events.map((e,i)=>`
+    <div class="preview-item"><b>${esc(e.title)}</b><br><small>${esc(e.date||"")} · ${esc(e.wing||"")}</small><p>${esc(e.details||"")}</p>
+    <div class="row-actions"><button class="delete" onclick="delItem('events',${i})">Delete</button></div></div>`).join("");
+  $("galleryPreview").innerHTML=state.gallery.map((g,i)=>`
+    <div class="preview-item"><b>${esc(g.album)}</b><p>${esc(g.description||"")}</p><small>${(g.images||[]).length} photo(s)</small>
+    <div class="row-actions"><button class="delete" onclick="delItem('gallery',${i})">Delete</button></div></div>`).join("");
+}
+window.delItem=(type,i)=>{state[type].splice(i,1);render();};
+
+$("addNotice").onclick=()=>{
+  state.notices.unshift({date:$("nDate").value,category:$("nCategory").value,title:$("nTitle").value,title_ml:$("nTitleMl").value,body:$("nBody").value,body_ml:$("nBodyMl").value});
+  ["nDate","nCategory","nTitle","nTitleMl","nBody","nBodyMl"].forEach(id=>$(id).value=""); render();
+};
+$("addEvent").onclick=()=>{
+  state.events.unshift({date:$("eDate").value,wing:$("eWing").value,title:$("eTitle").value,title_ml:$("eTitleMl").value,details:$("eDetails").value,details_ml:$("eDetailsMl").value,status:"planned"});
+  ["eDate","eTitle","eTitleMl","eDetails","eDetailsMl"].forEach(id=>$(id).value=""); render();
+};
+$("addAlbum").onclick=()=>{
+  const images=$("gImages").value.split(",").map(x=>x.trim()).filter(Boolean);
+  state.gallery.unshift({album:$("gAlbum").value,album_ml:$("gAlbumMl").value,description:$("gDesc").value,description_ml:$("gDescMl").value,images});
+  ["gAlbum","gAlbumMl","gDesc","gDescMl","gImages"].forEach(id=>$(id).value=""); render();
+};
+
+function code(){
+  return "window.SULARC_CONTENT = " + JSON.stringify(state,null,2) + ";\\n";
+}
+function refreshCode(){$("codeOutput").value=code();}
+$("downloadFile").onclick=()=>{
+  const blob=new Blob([code()],{type:"application/javascript"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="content-data.js"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+$("copyCode").onclick=async()=>{refreshCode(); if(navigator.clipboard) await navigator.clipboard.writeText($("codeOutput").value);};
+
+render();
+</script>
+</body></html>

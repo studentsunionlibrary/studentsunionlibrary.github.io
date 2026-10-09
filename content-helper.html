@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Content Helper | SULARC</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<section class="page-hero"><div class="wrap">
+<span class="eyebrow">Private helper</span><h1>Prepare a notice or event</h1>
+<p>This page does not upload anything. It only creates text you can copy when updating the website.</p>
+</div></section>
+<section class="section"><div class="wrap grid-2">
+<div class="card"><h3>Create Notice</h3>
+<form id="noticeForm">
+<label>Date</label><input id="ndate" type="date">
+<label>Category</label><input id="ncat" placeholder="Notice / Holiday / Programme">
+<label>Title</label><input id="ntitle">
+<label>Details</label><textarea id="nbody"></textarea>
+<button class="primary" type="submit">Generate Notice Entry</button>
+</form></div>
+<div class="card"><h3>Create Event</h3>
+<form id="eventForm">
+<label>Date</label><input id="edate" type="date">
+<label>Wing</label><select id="ewing"><option>Library</option><option>Balavedi</option><option>Vanitha Vedi</option><option>Senior Citizens' Wing</option></select>
+<label>Title</label><input id="etitle">
+<label>Details</label><textarea id="edetails"></textarea>
+<button class="primary" type="submit">Generate Event Entry</button>
+</form></div>
+</div>
+<div class="wrap" style="margin-top:22px"><label>Generated text</label><textarea id="output" style="min-height:200px" readonly></textarea><button class="outline" type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('output').value)">Copy</button></div>
+</section>
+<script>
+const esc=s=>JSON.stringify(s||'');
+document.getElementById('noticeForm').onsubmit=e=>{
+ e.preventDefault();
+ output.value=`{date:${esc(ndate.value)},category:${esc(ncat.value)},title:${esc(ntitle.value)},title_ml:"",body:${esc(nbody.value)},body_ml:""}`;
+};
+document.getElementById('eventForm').onsubmit=e=>{
+ e.preventDefault();
+ output.value=`{date:${esc(edate.value)},wing:${esc(ewing.value)},title:${esc(etitle.value)},title_ml:"",details:${esc(edetails.value)},details_ml:"",status:"planned"}`;
+};
+</script>
+</body></html>
