@@ -1,73 +1,79 @@
-// Public Website Settings — Student's Union Library
-// Reads public information from PythonAnywhere.
-
 (async function () {
-    const API =
-        "https://sularc1985.pythonanywhere.com/api/public/settings";
+  const API =
+    "https://sularc1985.pythonanywhere.com/api/public/settings";
 
-    try {
-        const response = await fetch(API, { cache: "no-cache" });
+  try {
+    const response = await fetch(API, { cache: "no-store" });
+    if (!response.ok) throw new Error("Settings unavailable");
 
-        if (!response.ok) {
-            throw new Error("Website settings unavailable");
-        }
+    const data = await response.json();
+    const settings = data.settings || {};
 
-        const data = await response.json();
-        const settings = data.settings || {};
+    const name = typeof settings.library_name === "string"
+      ? settings.library_name.trim() : "";
 
-        // Registration number in hero section
-        const registration = document.querySelector(".hero .tag");
-
-        if (registration && settings.registration_number) {
-            registration.textContent =
-                "REG. NO. " + settings.registration_number;
-        }
-
-        // Newspaper reading and book issue hours
-        const hourCards = document.querySelectorAll(
-            ".section.soft .card"
-        );
-
-        hourCards.forEach(function (card) {
-            const heading = card.querySelector("h3");
-            const paragraph = card.querySelector("p");
-
-            if (!heading || !paragraph) return;
-
-            if (
-                heading.textContent.includes("Newspaper Reading") &&
-                settings.newspaper_hours
-            ) {
-                paragraph.textContent = settings.newspaper_hours;
-            }
-
-            if (
-                heading.textContent.includes("Book Issue") &&
-                settings.book_issue_hours
-            ) {
-                paragraph.textContent = settings.book_issue_hours;
-            }
+    if (name) {
+      document.querySelectorAll(".identity b, .foot b")
+        .forEach(element => {
+          element.textContent = name;
         });
 
-        // Postal address in Contact section
-        const contact = document.querySelector("#contact");
+      document.querySelectorAll(".identity small")
+        .forEach(element => {
+          const parts = element.textContent.split("·");
+          if (parts.length > 1) {
+            element.textContent =
+              parts.slice(1).join("·").trim();
+          }
+        });
 
-        if (contact && settings.address) {
-            const address = contact.querySelector(
-                ".wrap > div:first-child > p"
-            );
+      const parts = document.title.split("|");
+      document.title = parts.length > 1
+        ? parts[0].trim() + " | " + name : name;
 
-            if (address) {
-                address.textContent = settings.address;
-            }
+      document.querySelectorAll(".hero p, .committee-intro")
+        .forEach(element => {
+          element.textContent = element.textContent.replace(
+            /Students?'(?:s)? Union Library\s*&\s*Recreation Centre/g,
+            () => name
+          );
+        });
+    }
+
+    const registration = document.querySelector(".hero .tag");
+    if (registration && settings.registration_number) {
+      registration.textContent =
+        "REG. NO. " + settings.registration_number;
+    }
+
+    document.querySelectorAll(".section.soft .card")
+      .forEach(card => {
+        const heading = card.querySelector("h3");
+        const paragraph = card.querySelector("p");
+        if (!heading || !paragraph) return;
+
+        if (
+          heading.textContent.includes("Newspaper Reading") &&
+          settings.newspaper_hours
+        ) {
+          paragraph.textContent = settings.newspaper_hours;
         }
 
-        console.log("Public website settings loaded.");
+        if (
+          heading.textContent.includes("Book Issue") &&
+          settings.book_issue_hours
+        ) {
+          paragraph.textContent = settings.book_issue_hours;
+        }
+      });
 
-    } catch (error) {
-        console.warn(
-            "Using existing website information:",
-            error.message
-        );
+    const address = document.querySelector(
+      "#contact .wrap > div:first-child > p"
+    );
+    if (address && settings.address) {
+      address.textContent = settings.address;
     }
+  } catch (error) {
+    console.warn("Website settings:", error.message);
+  }
 })();
