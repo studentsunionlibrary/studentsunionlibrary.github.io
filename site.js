@@ -9,3 +9,6 @@ document.querySelectorAll(".menu").forEach(btn=>btn.addEventListener("click",()=
  const actions=document.querySelector('.hero .actions');
  if(actions&&!actions.querySelector('a[href="digital-library.html"]')){const link=document.createElement('a');link.href='digital-library.html';link.className='outline';link.textContent='Digital Library';actions.append(link)}
 }if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add);else add()})();
+
+// SULARC PUBLIC ANNOUNCEMENT BANNER
+(function(){if(document.querySelector('script[data-public-banner]'))return;const s=document.createElement('script');s.src='announcement-banner.js?v=20261013';s.dataset.publicBanner='1';s.defer=true;document.head.append(s)})();
