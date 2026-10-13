@@ -1,6 +1,4 @@
-// SULARC Website v13 — Public Portal Integration
-// Leave baseUrl blank until the library has a permanent HTTPS portal address.
-// Do NOT use 127.0.0.1, a LAN IP, or a temporary trycloudflare URL.
+// Secure SULARC public portal
 window.SULARC_PORTAL = {
   baseUrl: "https://sularc1985.pythonanywhere.com",
   paths: {
